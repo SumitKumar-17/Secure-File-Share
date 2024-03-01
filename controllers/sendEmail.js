@@ -52,7 +52,7 @@ const sendEmailMailjet = async (receiverEmail, fileID, senderName = "Encrypt Sha
           Messages: [
             {
               From: {
-                Email: "aleksandarkuzmanovic02@gmail.com",
+                Email: "sumitkumar@kgpian.iitkgp.ac.in",
                 Name: senderName
               },
               To: [
