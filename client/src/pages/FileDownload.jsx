@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import{  useState } from "react";
 import axios from "axios";
 import { AdvancedPasswordInput, PageHeader } from "../components";
 import { toast } from 'react-toastify'
@@ -32,12 +32,10 @@ const FileDownload = () => {
         `http://localhost:4000/download/${fileId}`,
         { responseType: "blob",
         headers: {
-          'password': hashedPassword
+          'Password': hashedPassword
         }
       }
       );
-
-      console.log(response.headers["content-disposition"]);
 
 
       let filename = "decrypted_file";
@@ -68,7 +66,7 @@ const FileDownload = () => {
       setFileId("");
       toast.success("File successfully downloaded and deleted from the server");
     } catch (error) {
-      console.error("Greška prilikom preuzimanja ili dešifrovanja:", error);
+      console.error("Error came :", error);
       toast.error("Wrong File ID or password");
     }
   };

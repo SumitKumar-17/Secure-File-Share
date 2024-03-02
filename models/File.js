@@ -32,6 +32,8 @@ const FileSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide file id"]
     },
+},{
+    timestamps: true,
 });
 
 

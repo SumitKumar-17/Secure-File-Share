@@ -97,8 +97,9 @@ app.post("/", async (req, res) => {
 app.get("/download/:id", async (req, res) => {
   try {
     const file = await File.findOne({
-      fileId: req.params.id 
+      fileId: req.params.id,
     });
+
 
     const password = req.headers['password'];
 
@@ -107,14 +108,15 @@ app.get("/download/:id", async (req, res) => {
     }
 
     const filename = file.originalName || "downloaded_file";
-    console.log("filename", filename);
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${encodeURIComponent(filename)}"`
     );
     res.download(file.path, filename, async (err) => {
       if (!err) {
+
         await File.deleteOne({ _id: file._id });
+
         fs.unlink(file.path, (unlinkErr) => {
           if (unlinkErr) {
             console.log("Error deleting file:", unlinkErr);
@@ -125,10 +127,11 @@ app.get("/download/:id", async (req, res) => {
       }
     });
   } catch (err) {
-    console.log("Error retrieving file-42:", err);
     res.status(500).send({ msg: "Error retrieving file", error: err.message });
   }
 });
+
+
 
 
 app.post("/send", express.json(), async (req, res) => {
