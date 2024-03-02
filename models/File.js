@@ -27,7 +27,11 @@ const FileSchema = new mongoose.Schema({
     extension: {
         type: String,
         required: [true, "Please provide file extension"]
-    }
+    },
+    fileId: {
+        type: String,
+        required: [true, "Please provide file id"]
+    },
 });
 
 

@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const nosqlSanitizer = require('express-nosql-sanitizer');
 const { xss } = require('express-xss-sanitizer');
 const app = express();
+const { uploadFileToAzure } = require("./controllers/azureUpload");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,7 +42,7 @@ app.use(cors({
 app.use(fileUpload());
 
 
-app.post("/", express.json(), async (req, res) => {
+app.post("/", async (req, res) => {
 
   if (!req.files || !req.files.encryptedFile) {
     return res.status(400).json({ msg: "No file uploaded" });
@@ -52,29 +53,28 @@ app.post("/", express.json(), async (req, res) => {
   const receiverEmail = req.body.receiverEmail;
   const password = req.body.password;
 
-  const filename = Date.now() + "_" + file.name;
-  const uploadPath = __dirname + "/uploads/" + filename;
+ 
   try {
-    await file.mv(uploadPath);
-
-    const extension = path.extname(originalName);
+    const azureUploadResponse = await uploadFileToAzure(file);  
     const fileId = uuidv4();
-    const downloadLink = `http://localhost:4000/download/${fileId}`;
+    const downloadLink = azureUploadResponse.link;
 
-    const newFile = new File({
-      fileName: filename,
+     const newFile = new File({
+      fileName: azureUploadResponse.filename,
       originalName: originalName,
-      path: uploadPath,
       downloadLink: downloadLink,
-      extension: extension,
-      password: password
+      extension: path.extname(originalName),
+      password: password,
+      path: downloadLink,
+      fileId: fileId
     });
     await newFile.save();
 
     
     if (receiverEmail) {
       try {
-        await sendEmailGmail(receiverEmail, fileId);        console.log("mail sent");
+        await sendEmailGmail(receiverEmail, fileId);       
+         console.log("mail sent");
       } catch (error) {
         console.log("Error sending email:", error);
 
@@ -97,9 +97,8 @@ app.post("/", express.json(), async (req, res) => {
 app.get("/download/:id", async (req, res) => {
   try {
     const file = await File.findOne({
-      downloadLink: `http://localhost:4000/download/${req.params.id}`,
+      fileId: req.params.id 
     });
-
 
     const password = req.headers['password'];
 
@@ -108,15 +107,14 @@ app.get("/download/:id", async (req, res) => {
     }
 
     const filename = file.originalName || "downloaded_file";
+    console.log("filename", filename);
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${encodeURIComponent(filename)}"`
     );
     res.download(file.path, filename, async (err) => {
       if (!err) {
-
         await File.deleteOne({ _id: file._id });
-
         fs.unlink(file.path, (unlinkErr) => {
           if (unlinkErr) {
             console.log("Error deleting file:", unlinkErr);
@@ -127,13 +125,15 @@ app.get("/download/:id", async (req, res) => {
       }
     });
   } catch (err) {
+    console.log("Error retrieving file-42:", err);
     res.status(500).send({ msg: "Error retrieving file", error: err.message });
   }
 });
 
+
 app.post("/send", express.json(), async (req, res) => {
 
-  const { receiverEmail, fileID, senderName } = req.query;
+  const { receiverEmail, fileId, senderName } = req.query;
   try {
     await sendEmailGmail(receiverEmail, fileId,senderName);
     res.status(200).json({ msg: "Email sent successfully-2" });

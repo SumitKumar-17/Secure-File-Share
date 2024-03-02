@@ -32,10 +32,12 @@ const FileDownload = () => {
         `http://localhost:4000/download/${fileId}`,
         { responseType: "blob",
         headers: {
-          'Password': hashedPassword
+          'password': hashedPassword
         }
       }
       );
+
+      console.log(response.headers["content-disposition"]);
 
 
       let filename = "decrypted_file";
