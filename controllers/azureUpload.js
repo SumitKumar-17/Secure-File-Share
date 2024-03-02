@@ -1,7 +1,7 @@
 const { BlobServiceClient, AnonymousCredential } = require("@azure/storage-blob");
 const uniqid = require("uniqid");
 
- async function uploadFileToAzure(file) {
+async function uploadFileToAzure(file) {
   const sasUrl = process.env.AZURE_STORAGE_SAS_URL;
   const blobServiceClient = new BlobServiceClient(sasUrl, new AnonymousCredential());
 
@@ -25,4 +25,4 @@ const uniqid = require("uniqid");
   return { filename: newFilename, link };
 }
 
-module.exports={uploadFileToAzure};
+module.exports = { uploadFileToAzure };

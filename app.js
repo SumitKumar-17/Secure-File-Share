@@ -17,18 +17,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(xss());
 
-
-
-// const sendEmailMailjet = require("./controllers/sendEmail");
 const sendEmailGmail = require("./controllers/sendGmail");
 
-
-
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	limit: 100,
-	standardHeaders: 'draft-7',
-	legacyHeaders: false,
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
 })
 
 app.use(nosqlSanitizer());
@@ -53,13 +48,13 @@ app.post("/", async (req, res) => {
   const receiverEmail = req.body.receiverEmail;
   const password = req.body.password;
 
- 
+
   try {
-    const azureUploadResponse = await uploadFileToAzure(file);  
+    const azureUploadResponse = await uploadFileToAzure(file);
     const fileId = uuidv4();
     const downloadLink = azureUploadResponse.link;
 
-     const newFile = new File({
+    const newFile = new File({
       fileName: azureUploadResponse.filename,
       originalName: originalName,
       downloadLink: downloadLink,
@@ -70,18 +65,18 @@ app.post("/", async (req, res) => {
     });
     await newFile.save();
 
-    
+
     if (receiverEmail) {
       try {
-        await sendEmailGmail(receiverEmail, fileId);       
-         console.log("mail sent");
+        await sendEmailGmail(receiverEmail, fileId);
+        console.log("mail sent");
       } catch (error) {
         console.log("Error sending email:", error);
 
         return res.status(500).json({ msg: "Error sending email", error: error.message });
       }
     }
-    
+
 
     res
       .status(200)
@@ -132,14 +127,11 @@ app.get("/download/:id", async (req, res) => {
 });
 
 
-
-
-
 app.post("/send", express.json(), async (req, res) => {
 
   const { receiverEmail, fileId, senderName } = req.query;
   try {
-    await sendEmailGmail(receiverEmail, fileId,senderName);
+    await sendEmailGmail(receiverEmail, fileId, senderName);
     res.status(200).json({ msg: "Email sent successfully-2" });
   } catch (error) {
     console.log("Error sending email:", error);

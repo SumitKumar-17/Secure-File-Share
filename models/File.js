@@ -10,7 +10,7 @@ const FileSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-      },
+    },
     originalName: {
         type: String,
         required: [true, "Please add original file name"]
@@ -32,7 +32,7 @@ const FileSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide file id"]
     },
-},{
+}, {
     timestamps: true,
 });
 
