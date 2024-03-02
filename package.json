@@ -19,6 +19,7 @@
     "express-nosql-sanitizer": "^1.1.1",
     "express-rate-limit": "^7.1.5",
     "express-xss-sanitizer": "^1.1.8",
+    "fs": "^0.0.1-security",
     "mongoose": "^8.2.0",
     "node-mailjet": "^6.0.5",
     "nodemailer": "^6.9.8",

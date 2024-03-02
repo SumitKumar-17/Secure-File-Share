@@ -119,9 +119,9 @@ app.get("/download/:id", async (req, res) => {
 
         fs.unlink(file.path, (unlinkErr) => {
           if (unlinkErr) {
-            console.log("Error deleting file:", unlinkErr);
+            console.error("Error:", unlinkErr);
           } else {
-            console.log("File deleted successfully");
+            console.log("Error failed.");
           }
         });
       }
@@ -130,6 +130,7 @@ app.get("/download/:id", async (req, res) => {
     res.status(500).send({ msg: "Error retrieving file", error: err.message });
   }
 });
+
 
 
 

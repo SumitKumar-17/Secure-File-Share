@@ -1,4 +1,4 @@
-import{  useState } from "react";
+import {useState } from "react";
 import axios from "axios";
 import { AdvancedPasswordInput, PageHeader } from "../components";
 import { toast } from 'react-toastify'
@@ -66,7 +66,7 @@ const FileDownload = () => {
       setFileId("");
       toast.success("File successfully downloaded and deleted from the server");
     } catch (error) {
-      console.error("Error came :", error);
+      console.error("Greška prilikom preuzimanja ili dešifrovanja:", error);
       toast.error("Wrong File ID or password");
     }
   };
