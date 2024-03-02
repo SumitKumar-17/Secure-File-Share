@@ -16,7 +16,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(xss());
 
-const sendEmailMailjet = require("./controllers/sendEmail");
+
+
+// const sendEmailMailjet = require("./controllers/sendEmail");
+const sendEmailGmail = require("./controllers/sendGmail");
 
 
 
@@ -71,7 +74,7 @@ app.post("/", express.json(), async (req, res) => {
     
     if (receiverEmail) {
       try {
-        await sendEmailMailjet(receiverEmail, fileId);
+        await sendEmailGmail(receiverEmail, fileId);        console.log("mail sent");
       } catch (error) {
         console.log("Error sending email:", error);
 
@@ -116,9 +119,9 @@ app.get("/download/:id", async (req, res) => {
 
         fs.unlink(file.path, (unlinkErr) => {
           if (unlinkErr) {
-            console.error("Greška prilikom brisanja fajla:", unlinkErr);
+            console.log("Error deleting file:", unlinkErr);
           } else {
-            console.log("Fajl uspešno obrisan nakon preuzimanja.");
+            console.log("File deleted successfully");
           }
         });
       }
@@ -132,10 +135,10 @@ app.post("/send", express.json(), async (req, res) => {
 
   const { receiverEmail, fileID, senderName } = req.query;
   try {
-    await sendEmailMailjet(receiverEmail, fileID, senderName);
-    res.status(200).json({ msg: "Email sent successfully" });
+    await sendEmailGmail(receiverEmail, fileId,senderName);
+    res.status(200).json({ msg: "Email sent successfully-2" });
   } catch (error) {
-    console.error("Greška prilikom slanja e-maila:", error);
+    console.log("Error sending email:", error);
     res.status(500).json({ error: error.message });
   }
 });

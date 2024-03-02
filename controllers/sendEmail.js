@@ -1,43 +1,6 @@
-const nodemailer = require("nodemailer");
-const sgMail = require('@sendgrid/mail')
 const Mailjet = require('node-mailjet');
 var SibApiV3Sdk = require('sib-api-v3-sdk');
 
-
-
-const mailjet = Mailjet.apiConnect(
-    process.env.MJ_APIKEY_PUBLIC,
-    process.env.MJ_APIKEY_PRIVATE,
-    {
-      config: {},
-      options: {}
-    } 
-);
-
-const sendEmailEthereal = async (req, res) => {
-    let testAccount = await nodemailer.createTestAccount();
-
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        auth: {
-            user: 'jamar.hodkiewicz61@ethereal.email',
-            pass: 'vWjxnQ9QryVBm7GtJD'
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    });
-
-    let info = await transporter.sendMail({
-        from: '"Kuzma02" <aleksandarkuzmanovic02@gmail.com>',
-        to: 'jamar.hodkiewicz61@ethereal.email',
-        subject: 'Hello',
-        html: '<h2>Sending Emails With Node.js</h2>'
-    });
-
-    res.json(info);
-}
 
 const sendEmailMailjet = async (receiverEmail, fileID, senderName = "Encrypt Share") => {
     const mailjet = Mailjet.apiConnect(
@@ -52,7 +15,7 @@ const sendEmailMailjet = async (receiverEmail, fileID, senderName = "Encrypt Sha
           Messages: [
             {
               From: {
-                Email: "sumitkumar@kgpian.iitkgp.ac.in",
+                Email: "sumitk",
                 Name: senderName
               },
               To: [
@@ -69,14 +32,14 @@ const sendEmailMailjet = async (receiverEmail, fileID, senderName = "Encrypt Sha
         });
   
       if (request && request.body) {
-
+        console.log("Email sent Successfully-1", request.body);
         return { success: true, data: request.body };
       } else {
-
+        console.log("Email sending failed", request.body);
         return { success: false, error: "Email sending failed" };
       }
     } catch (err) {
-
+      console.log("Email sending error:",err);
       return { success: false, error: err.message };
     }
   };
