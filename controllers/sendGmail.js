@@ -26,7 +26,8 @@ const sendEmailGmail = async (receiverEmail, fileID, senderName = "Secured Stora
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent successfully:", info);
+        console.log("Email sent successfully:");
+        // console.log(info);
         return { success: true, data: info };
     } catch (error) {
         console.log("Email sending error:", error);
